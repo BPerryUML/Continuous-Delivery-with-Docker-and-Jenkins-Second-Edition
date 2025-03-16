@@ -37,6 +37,14 @@ pipeline {
                 ])
                 
             }
+            post {
+                success{
+                    echo 'tests pass!'
+                }
+                failure{
+                    echo 'tests fail!'
+                }          
+            }
         }
         stage ('other branch detected') {
             when {
@@ -63,6 +71,14 @@ pipeline {
                         reportFiles: 'index.html',
                         reportName: "JaCoCo Report"
                 ])
+            }
+            post {
+                success{
+                    echo 'tests pass!'
+                }
+                failure{
+                    echo 'tests fail!'
+                }          
             }
         }
     }
