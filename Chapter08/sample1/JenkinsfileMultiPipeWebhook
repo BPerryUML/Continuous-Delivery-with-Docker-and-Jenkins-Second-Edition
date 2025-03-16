@@ -1,0 +1,73 @@
+// This example uses Jenkin's "declarative" syntax
+pipeline {
+    agent {
+        label 'gradle-agent'
+    }
+    stages {
+        stage('main branch detected') {
+            when {
+                    branch 'main'
+            }
+            steps {
+                sh """
+                cd Chapter08/sample1
+                ./gradlew jacocoTestCoverageVerification
+                ./gradlew checkstyleMain
+                ./gradlew test
+                ./gradlew jacocoTestReport
+                """
+                publishHTML (target: [
+                            reportDir: 'Chapter08/sample1/build/reports/jacoco/test/html',
+                            reportFiles: 'index.html',
+                            reportName: "JaCoCo Coverage Report"
+                ])
+                publishHTML (
+                    target: [
+                        reportDir: 'Chapter08/sample1/build/reports/checkstyle',
+                        reportFiles: 'main.html',
+                        reportName: "JaCoCo Checkstyle"
+                ])
+                publishHTML (
+                     target: [
+                        reportDir: 'Chapter08/sample1/build/reports/tests/test',
+                        reportFiles: 'index.html',
+                        reportName: "JaCoCo Report"
+                ])
+                
+            }
+        }
+        stage('feature branch detected') {
+            when {
+                    branch pattern: ".*feature.*", comparator: "REGEXP"
+            }
+            steps {
+                sh """
+                cd Chapter08/sample1
+                ./gradlew checkstyleMain
+                ./gradlew test
+                ./gradlew jacocoTestReport
+                """
+                publishHTML (
+                    target: [
+                        reportDir: 'Chapter08/sample1/build/reports/checkstyle',
+                        reportFiles: 'main.html',
+                        reportName: "JaCoCo Checkstyle"
+                ])
+                publishHTML (
+                     target: [
+                        reportDir: 'Chapter08/sample1/build/reports/tests/test',
+                        reportFiles: 'index.html',
+                        reportName: "JaCoCo Report"
+                ])    
+            }
+        }
+        stage ('other branch detected') {
+            when {
+                not { anyOf { branch 'main'; branch pattern: ".*feature.*", comparator: "REGEXP" } }
+            }
+            steps {
+                error("Invalid Branch Detected")
+            }
+        }
+    }
+}
