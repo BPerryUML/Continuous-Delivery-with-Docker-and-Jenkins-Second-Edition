@@ -36,9 +36,9 @@ pipeline {
                 
             }
         }
-        stage('feature branch detected') {
+        stage ('other branch detected') {
             when {
-                    branch pattern: ".*feature.*", comparator: "REGEXP"
+                not { branch 'main' }
             }
             steps {
                 sh """
@@ -59,14 +59,6 @@ pipeline {
                         reportFiles: 'index.html',
                         reportName: "JaCoCo Report"
                 ])    
-            }
-        }
-        stage ('other branch detected') {
-            when {
-                not { anyOf { branch 'main'; branch pattern: ".*feature.*", comparator: "REGEXP" } }
-            }
-            steps {
-                error("Invalid Branch Detected")
             }
         }
     }
