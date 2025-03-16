@@ -1,6 +1,6 @@
 /**
  * This is the main file for the calculator source code
- * @author Leszko -Update For Homework newfeature2branch
+ * @author Leszko -Update For Homework newfeature2branch update
  * @version 1
 */
 package com.leszko.calculator;
