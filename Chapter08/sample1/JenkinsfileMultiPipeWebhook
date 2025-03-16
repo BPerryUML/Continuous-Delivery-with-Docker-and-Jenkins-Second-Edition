@@ -10,13 +10,13 @@ pipeline {
             }
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { 
-                sh """
-                cd Chapter08/sample1
-                ./gradlew jacocoTestCoverageVerification
-                ./gradlew checkstyleMain
-                ./gradlew test
-                ./gradlew jacocoTestReport
-                """
+                    sh """
+                    cd Chapter08/sample1
+                    ./gradlew jacocoTestCoverageVerification
+                    ./gradlew checkstyleMain
+                    ./gradlew test
+                    ./gradlew jacocoTestReport
+                    """
                 }
                 publishHTML (target: [
                             reportDir: 'Chapter08/sample1/build/reports/jacoco/test/html',
