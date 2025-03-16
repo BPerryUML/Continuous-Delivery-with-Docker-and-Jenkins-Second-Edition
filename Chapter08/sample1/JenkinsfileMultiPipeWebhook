@@ -9,13 +9,15 @@ pipeline {
                     branch 'main'
             }
             steps {
-                sh """
-                cd Chapter08/sample1
-                ./gradlew jacocoTestCoverageVerification
-                ./gradlew checkstyleMain
-                ./gradlew test
-                ./gradlew jacocoTestReport
-                """
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { 
+                    sh """
+                    cd Chapter08/sample1
+                    ./gradlew jacocoTestCoverageVerification
+                    ./gradlew checkstyleMain
+                    ./gradlew test
+                    ./gradlew jacocoTestReport
+                    """
+                }
                 publishHTML (target: [
                             reportDir: 'Chapter08/sample1/build/reports/jacoco/test/html',
                             reportFiles: 'index.html',
@@ -48,19 +50,19 @@ pipeline {
                     ./gradlew test
                     ./gradlew jacocoTestReport
                     """
-                    publishHTML (
-                        target: [
-                            reportDir: 'Chapter08/sample1/build/reports/checkstyle',
-                            reportFiles: 'main.html',
-                            reportName: "JaCoCo Checkstyle"
-                    ])
-                    publishHTML (
-                        target: [
-                            reportDir: 'Chapter08/sample1/build/reports/tests/test',
-                            reportFiles: 'index.html',
-                            reportName: "JaCoCo Report"
-                    ])
                 }
+                publishHTML (
+                    target: [
+                        reportDir: 'Chapter08/sample1/build/reports/checkstyle',
+                        reportFiles: 'main.html',
+                        reportName: "JaCoCo Checkstyle"
+                ])
+                publishHTML (
+                    target: [
+                        reportDir: 'Chapter08/sample1/build/reports/tests/test',
+                        reportFiles: 'index.html',
+                        reportName: "JaCoCo Report"
+                ])
             }
         }
     }
