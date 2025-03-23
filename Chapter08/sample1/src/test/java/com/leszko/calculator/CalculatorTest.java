@@ -1,3 +1,8 @@
+/**
+ * This is the main file for the calculator source code
+ * @author Leszko -Update For Homework
+ * @version 1z
+*/
 package com.leszko.calculator;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
