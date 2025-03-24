@@ -115,7 +115,7 @@ pipeline {
                         cd ${PROJECT_DIR}
                         echo "\$DOCKER_PASS" | docker login \$REGISTRY -u \$DOCKER_USER --password-stdin
                         docker build -t "calculator-feature" .
-                        docker tag "calculator-feature" ${REGISTRY_HOST}/"calculator":"0.1"
+                        docker tag "calculator-feature" ${REGISTRY_HOST}/"calculator-feature":"0.1"
                         docker push ${REGISTRY_HOST}/"calculator-feature":"0.1"
                         """
                         }
