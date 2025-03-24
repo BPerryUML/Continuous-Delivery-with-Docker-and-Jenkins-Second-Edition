@@ -67,9 +67,9 @@ pipeline {
                         set -e
                         cd ${PROJECT_DIR}
                         echo "\$DOCKER_PASS" | docker login \$REGISTRY -u \$DOCKER_USER --password-stdin
-                        docker build -t ${IMAGE_NAME} .
-                        docker tag ${IMAGE_NAME} ${REGISTRY_HOST}/${IMAGE_NAME}:${IMAGE_TAG}
-                        docker push ${REGISTRY_HOST}/${IMAGE_NAME}:${IMAGE_TAG}
+                        docker build -t "calculator" .
+                        docker tag "calculator" ${REGISTRY_HOST}/"calculator":"1.0"
+                        docker push ${REGISTRY_HOST}/"calculator":"1.0"
                         """
                         }
                     }
