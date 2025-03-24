@@ -27,9 +27,9 @@ pipeline {
             }
         }
         stage('main branch detected') {
-            //when {
-            //        branch 'main'
-            //}
+            when {
+                   branch 'main'
+            }
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { 
                     sh """
@@ -73,6 +73,89 @@ pipeline {
                         """
                         }
                     }
+                }
+                failure{
+                    echo 'tests fail!'
+                }          
+            }
+        }
+        stage('feature branch detected') {
+            when {
+                   branch 'feature'
+            }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { 
+                    sh """
+                    cd Chapter08/sample1
+                    ./gradlew checkstyleMain
+                    ./gradlew test
+                    ./gradlew jacocoTestReport
+                    """
+                }
+                publishHTML (
+                    target: [
+                        reportDir: 'Chapter08/sample1/build/reports/checkstyle',
+                        reportFiles: 'main.html',
+                        reportName: "JaCoCo Checkstyle"
+                ])
+                publishHTML (
+                     target: [
+                        reportDir: 'Chapter08/sample1/build/reports/tests/test',
+                        reportFiles: 'index.html',
+                        reportName: "JaCoCo Report"
+                ])
+                
+            }
+            post {
+                success{
+                    script {
+                        withCredentials([usernamePassword(credentialsId: 'docker-registry', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh """
+                        set -e
+                        cd ${PROJECT_DIR}
+                        echo "\$DOCKER_PASS" | docker login \$REGISTRY -u \$DOCKER_USER --password-stdin
+                        docker build -t "calculator-feature" .
+                        docker tag "calculator-feature" ${REGISTRY_HOST}/"calculator":"0.1"
+                        docker push ${REGISTRY_HOST}/"calculator-feature":"0.1"
+                        """
+                        }
+                    }
+                }
+                failure{
+                    echo 'tests fail!'
+                }          
+            }
+        }
+        stage('playground branch detected') {
+            when {
+                   branch 'playground'
+            }
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { 
+                    sh """
+                    cd Chapter08/sample1
+                    ./gradlew checkstyleMain
+                    ./gradlew test
+                    ./gradlew jacocoTestReport
+                    """
+                }
+                publishHTML (
+                    target: [
+                        reportDir: 'Chapter08/sample1/build/reports/checkstyle',
+                        reportFiles: 'main.html',
+                        reportName: "JaCoCo Checkstyle"
+                ])
+                publishHTML (
+                     target: [
+                        reportDir: 'Chapter08/sample1/build/reports/tests/test',
+                        reportFiles: 'index.html',
+                        reportName: "JaCoCo Report"
+                ])
+                
+            }
+            post {
+                success{
+                    echo 'tests passed but no build due to playground'
                 }
                 failure{
                     echo 'tests fail!'
