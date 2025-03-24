@@ -26,30 +26,57 @@ pipeline {
                 """
             }
         }
-        stage('Build') {
+        stage('main branch detected') {
+            //when {
+            //        branch 'main'
+            //}
             steps {
-                sh """
-                set -e
-                cd ${PROJECT_DIR}
-                ./gradlew build
-                """
-            }
-        }
-        stage('Login to Registry and build image') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'docker-registry', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { 
                     sh """
-                    set -e
-                    cd ${PROJECT_DIR}
-                    echo "\$DOCKER_PASS" | docker login \$REGISTRY -u \$DOCKER_USER --password-stdin
-                    docker build -t ${IMAGE_NAME} .
-                    docker tag ${IMAGE_NAME} ${REGISTRY_HOST}/${IMAGE_NAME}:${IMAGE_TAG}
-                    docker push ${REGISTRY_HOST}/${IMAGE_NAME}:${IMAGE_TAG}
+                    cd Chapter08/sample1
+                    ./gradlew jacocoTestCoverageVerification
+                    ./gradlew checkstyleMain
+                    ./gradlew test
+                    ./gradlew jacocoTestReport
                     """
-                    
+                }
+                publishHTML (target: [
+                            reportDir: 'Chapter08/sample1/build/reports/jacoco/test/html',
+                            reportFiles: 'index.html',
+                            reportName: "JaCoCo Coverage Report"
+                ])
+                publishHTML (
+                    target: [
+                        reportDir: 'Chapter08/sample1/build/reports/checkstyle',
+                        reportFiles: 'main.html',
+                        reportName: "JaCoCo Checkstyle"
+                ])
+                publishHTML (
+                     target: [
+                        reportDir: 'Chapter08/sample1/build/reports/tests/test',
+                        reportFiles: 'index.html',
+                        reportName: "JaCoCo Report"
+                ])
+                
+            }
+            post {
+                success{
+                    script {
+                        withCredentials([usernamePassword(credentialsId: 'docker-registry', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh """
+                        set -e
+                        cd ${PROJECT_DIR}
+                        echo "\$DOCKER_PASS" | docker login \$REGISTRY -u \$DOCKER_USER --password-stdin
+                        docker build -t ${IMAGE_NAME} .
+                        docker tag ${IMAGE_NAME} ${REGISTRY_HOST}/${IMAGE_NAME}:${IMAGE_TAG}
+                        docker push ${REGISTRY_HOST}/${IMAGE_NAME}:${IMAGE_TAG}
+                        """
+                        }
                     }
                 }
+                failure{
+                    echo 'tests fail!'
+                }          
             }
         }
     }
