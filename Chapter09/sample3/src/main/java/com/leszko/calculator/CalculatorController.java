@@ -1,7 +1,7 @@
 package com.leszko.calculator;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+//import java.sql.Timestamp;
+//import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,14 +13,14 @@ class CalculatorController {
 	@Autowired
 	private Calculator calculator;
 
-	@Autowired
-	private CalculationRepository calculationRepository;
+	//@Autowired
+	//private CalculationRepository calculationRepository;
 
 	@RequestMapping("/sum")
 	String sum(@RequestParam("a") Integer a,
 			@RequestParam("b") Integer b) {
 		String result = String.valueOf(calculator.sum(a, b));
-		calculationRepository.save(new Calculation(a.toString(), b.toString(), result, Timestamp.from(Instant.now())));
+		//calculationRepository.save(new Calculation(a.toString(), b.toString(), result, Timestamp.from(Instant.now())));
 		return result;
 	}
 
@@ -28,7 +28,7 @@ class CalculatorController {
         String div(@RequestParam("a") Integer a,
                         @RequestParam("b") Integer b) {
                 String result = b!=0 ? String.valueOf(calculator.div(a, b)) : "Division by 0";
-                calculationRepository.save(new Calculation(a.toString(), b.toString(), result, Timestamp.from(Instant.now())));
+                //calculationRepository.save(new Calculation(a.toString(), b.toString(), result, Timestamp.from(Instant.now())));
                 return result;
         }
 }
