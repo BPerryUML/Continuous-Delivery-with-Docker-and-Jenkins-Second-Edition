@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: calculator
-        image: dlambrig/week8:1.1
+        image: bperry/calculator:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
