@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: calculator
-        image: localhost:5001/bperry/calculator:{{VERSION}}
+        image: docker.host.internal:5001/bperry/calculator:{{VERSION}}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
