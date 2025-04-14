@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  * @version 1
 */
 /**
- * not sure what @service does EDIT for HOMEWORK
+ * not sure what @service does EDIT for HOMEWORK Poll Trigger
 */
 @Service
 /** 
